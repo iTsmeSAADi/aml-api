@@ -8,10 +8,6 @@
     "dev": "nodemon server.js",
     "start": "node server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/FarrukhAdeel67/Backend_AML.git"
-  },
   "author": "",
   "license": "ISC",
   "bugs": {

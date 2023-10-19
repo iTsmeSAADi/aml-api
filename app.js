@@ -13,7 +13,7 @@ import {
   connectIDAnalyzerVault,
 } from "./utils/connectIDAnalyzer.js";
 config({
-  path: "./config/config.env",
+  path: "./.env",
 });
 const app = express();
 //using middlewares
@@ -27,7 +27,7 @@ app.use(cookieParser());
 //cors configuration
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: "*",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
