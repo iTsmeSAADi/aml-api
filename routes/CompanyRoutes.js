@@ -12,8 +12,8 @@ import { isAuthenticated } from "../middlewares/isAuthenticated.js";
 import { isSuperAdmin } from "../middlewares/isSuperAdmin.js";
 const router = express.Router();
 //get all companies by superAdmin 
-
-router.route("/").get(isAuthenticated, isSuperAdmin, getAllCompanies);
+//isAuthenticated, isSuperAdmin
+router.route("/").get(getAllCompanies);
 //add new company only by superAdmin
 router.route("/addcompany").post(isAuthenticated, isSuperAdmin, addCompany);
 //Invite User user management by superAdmin
