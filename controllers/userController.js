@@ -4,24 +4,27 @@ import errorHandler from "../utils/errorHandler.js";
 import { sendToken } from "../utils/sendToken.js";
 //Sign Up User
 export const register = catchAsyncError(async (req, res, next) => {
-  console.log("hhh");
-  const { name, email, contact, password, companyName, role } = req.body;
-  if (!name || !email || !contact || !password)
+  const { name, email, password, companyName, role } = req.body;
+  if (!email || !password || !role)
     return next(new errorHandler("Required fields cannot be empty", 400));
-  let user = await User.findOne({
-    $or: [{
+  let user;
+  if (role === "admin") {
+    console.log("Admin");
+    user = await User.findOne({
+      $or: [
+        { email },
+        { companyName }
+      ]
+    })
+  } else {
+    user = await User.findOne({
       email: email,
-    },
-    {
-      contact: contact,
-    },
-    ],
-  });
+    })
+  }
   if (user) return next(new errorHandler("User already exists", 409));
   user = await User.create({
     name,
     email,
-    contact,
     password,
     companyName,
     role

@@ -10,18 +10,12 @@ const schema = new mongoose.Schema({
   companyName: {
     type: String,
     required: [true, "Company Already Exists"],
-    unique: true,
   },
   email: {
     type: String,
     required: [true, "Please Enter Your Email"],
     unique: true,
     validate: validator.isEmail,
-  },
-  contact: {
-    type: String,
-    required: [true, "Please Enter Your Contact Number"],
-    unique: true,
   },
   password: {
     type: String,
