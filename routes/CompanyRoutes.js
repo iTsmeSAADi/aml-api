@@ -11,7 +11,8 @@ import {
 import { isAuthenticated } from "../middlewares/isAuthenticated.js";
 import { isSuperAdmin } from "../middlewares/isSuperAdmin.js";
 const router = express.Router();
-//get all companies by superAdmin
+//get all companies by superAdmin 
+
 router.route("/").get(isAuthenticated, isSuperAdmin, getAllCompanies);
 //add new company only by superAdmin
 router.route("/addcompany").post(isAuthenticated, isSuperAdmin, addCompany);

@@ -5,21 +5,17 @@ import { CompanyUser } from "../models/CompanyUser.js";
 import errorHandler from "../utils/errorHandler.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { sendToken } from "../utils/sendToken.js";
+import { User } from "../models/User.js";
 //Get All companies
-export const getAllCompanies = catchAsyncError(async (req, res, next) => {
-  const keyword = req.query.keyword || "";
-  console.log(keyword);
 
-  const companies = await Company.find({
-    name: {
-      $regex: keyword, //regular expressions
-      $options: "i", //case - insensitve, g: match all strings.
-    },
+export const getAllCompanies = catchAsyncError(async (req, res, next) => {
+  const companies = await User.find({
+    role: "admin",
   });
   res.status(200).json({
     success: true,
     message: "all companies",
-    companies,
+    "data": companies,
   });
 });
 export const addCompany = catchAsyncError(async (req, res, next) => {
