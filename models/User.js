@@ -6,7 +6,11 @@ import moment from "moment";
 const schema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, "Please Enter Your Name"],
+  },
+  companyName: {
+    type: String,
+    required: [true, "Company Already Exists"],
+    unique: true,
   },
   email: {
     type: String,

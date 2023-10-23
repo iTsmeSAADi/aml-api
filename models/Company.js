@@ -37,4 +37,4 @@ schema.pre("updateOne", function (next) {
   this.set({ updatedAt: moment().unix() });
   next();
 });
-export const Company = mongoose.model("Company", schema);
+export const Company = mongoose.model("companies", schema);
