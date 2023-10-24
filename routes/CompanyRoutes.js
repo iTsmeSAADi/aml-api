@@ -15,7 +15,7 @@ const router = express.Router();
 //get all companies by superAdmin 
 //isAuthenticated, isSuperAdmin
 router.route("/").get(isAuthenticated, getAllCompanies);
-router.route("/:id").get(isAuthenticated, getAllUsers);
+router.route("/users").get(isAuthenticated, getAllUsers);
 //add new company only by superAdmin
 router.route("/addcompany").post(isAuthenticated, isSuperAdmin, addCompany);
 //Invite User user management by superAdmin

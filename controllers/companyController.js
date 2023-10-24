@@ -19,16 +19,24 @@ export const getAllCompanies = catchAsyncError(async (req, res, next) => {
   });
 });
 export const getAllUsers = catchAsyncError(async (req, res, next) => {
-  let id = req.params.id;
+  let user = req.user;
+  console.log(user);
   let query = {};
-  if (id === "superAdmin") {
+  if (user.role === "user") {
+    res.status(200).json({
+      success: true,
+      message: "Don't Have Access",
+      data: [],
+    });
+  }
+  if (user.role === "superAdmin") {
     query = {
       role: "user"
-    }
+    };
   }
   else {
     query = {
-      name: id,
+      name: user.companyName,
       role: "user"
     };
   }
