@@ -28,6 +28,10 @@ const schema = new mongoose.Schema({
     enum: ["user", "superAdmin", "admin"],
     default: "user",
   },
+  token: {
+    type: String,
+    default: "",
+  },
   updatedAt: {
     type: Number,
     required: true,

@@ -6,10 +6,12 @@ export const sendToken = (res, user, message, statusCode = 200) => {
     // secure: true, //when using with front end this must be uncomment
     sameSite: "none",
   };
-  res.status(statusCode).cookie("token", token, options).json({
+  user.token = token;
+  var data = {
     success: true,
     message,
     user,
-    token,
-  });
+  };
+  console.log(data);
+  res.status(statusCode).cookie("token", token, options).json(data);
 };
