@@ -18,6 +18,28 @@ export const getAllCompanies = catchAsyncError(async (req, res, next) => {
     "data": companies,
   });
 });
+export const getAllUsers = catchAsyncError(async (req, res, next) => {
+  let id = req.params.id;
+  let query = {};
+  if (id === "superAdmin") {
+    query = {
+      role: "user"
+    }
+  }
+  else {
+    query = {
+      name: id,
+      role: "user"
+    };
+  }
+  const users = await User.find(query).select('-password');
+  res.status(200).json({
+    success: true,
+    message: "all users",
+    data: users,
+  });
+});
+
 export const addCompany = catchAsyncError(async (req, res, next) => {
   const { name } = req.body;
   if (!name) return next(new errorHandler("Comapany Name is required", 400));
