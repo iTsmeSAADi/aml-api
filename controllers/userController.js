@@ -44,8 +44,8 @@ export const login = catchAsyncError(async (req, res, next) => {
     return next(new errorHandler("Required field cannot be empty"), 400);
   let user = await User.findOne({ email }).select("+password");
   if (!user) return next(new errorHandler("Invalid email or password", 401));
-  if (user.role !== "superAdmin")
-    return next(new errorHandler("User Role is not SuperAdmin", 401));
+  // if (user.role !== "superAdmin")
+  //   return next(new errorHandler("User Role is not SuperAdmin", 401));
   const isMatch = await user.comparePassword(password);
   if (!isMatch) return next(new errorHandler("Invalid or email Password", 401));
   user.password = undefined; //this temporary remove the password from sending in the response
