@@ -4,7 +4,8 @@ import errorHandler from "../utils/errorHandler.js";
 import { catchAsyncError } from "./catchAsyncError.js";
 import jwt from "jsonwebtoken";
 export const isAuthenticated = catchAsyncError(async (req, res, next) => {
-  const { token } = req.headers.token;
+  const token = req.headers.token;
+  console.log(token);
   if (!token) return next(new errorHandler("User Not Logged In", 401));
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
   const user = await User.findById(decoded._id);
