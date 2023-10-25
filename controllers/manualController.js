@@ -283,18 +283,15 @@ export const quickDocumentScan = catchAsyncError(async (req, res, next) => {
     });
     if (!response.error) {
       console.log(response);
-      // All the information about this ID will be returned in an associative array
       const data_result = response["result"];
       const authentication_result = response["authentication"];
       const aml_result = response["aml"];
       const aml_database = aml_result["database"];
       const aml_schema = aml_result["schema"];
       let message = "";
-      // Print result
       console.log(
         `Hello your name is ${data_result["firstName"]} ${data_result["lastName"]}`
       );
-      // Parse document authentication results
       if (authentication_result) {
         if (authentication_result["score"] > 0.5) {
           console.log("The document uploaded is authentic");
@@ -324,7 +321,6 @@ export const quickDocumentScan = catchAsyncError(async (req, res, next) => {
         message,
       });
     } else {
-      // Error occurred
       console.log(response.error);
     }
   } catch (err) {
