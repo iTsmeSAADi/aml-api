@@ -104,7 +104,7 @@ export const emailIdentityVerification = catchAsyncError(
         email,
       });
       if (userInvite) return next(new errorHandler("User already exists", 409));
-      const { user } = req;
+      const { user } = req.user;
       const { companyUser } = req;
       let adminId = "";
       let adminEmail = "";

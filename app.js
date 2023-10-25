@@ -5,6 +5,7 @@ import errorMiddleware from "./middlewares/error.js";
 import userRouter from "./routes/UserRoutes.js";
 import companyRoutes from "./routes/CompanyRoutes.js";
 import manualRoutes from "./routes/ManualRoutes.js";
+import screaningsRoute from "./routes/ScreeningRoutes.js";
 import cors from "cors";
 import {
   connectIDAnalyzer,
@@ -46,6 +47,7 @@ app.get("/", (req, res) => {
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/company", companyRoutes);
 app.use("/api/v1/manual", manualRoutes);
+app.use("/api/v1/getallscreenings", screaningsRoute);
 
 export default app;
 app.use(errorMiddleware);
