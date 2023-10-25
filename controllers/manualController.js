@@ -2,6 +2,7 @@ import { catchAsyncError } from "../middlewares/catchAsyncError.js";
 import errorHandler from "../utils/errorHandler.js";
 import { DocuPass, amlAPI, VaultApi, CoreAPI } from "../app.js";
 import { Company } from "../models/Company.js";
+import { User } from "../models/User.js";
 import { MaunalEmailVerification } from "../models/ManualEmailVerification.js";
 import { docuPassFeatures } from "../utils/IDAnalyzer/docuPassFeatures.js";
 import { sendEmail } from "../utils/sendEmail.js";
@@ -96,7 +97,7 @@ export const emailIdentityVerification = catchAsyncError(
       const { name, email, company } = req.body;
       if (!name || !email || !company)
         return next(new errorHandler("Required fields can not be empty!", 400));
-      const companyName = await Company.findOne({ name: company });
+      const companyName = await User.findOne({ companyName: company });
       if (!companyName)
         return next(new errorHandler("Company doesn't exist!", 404));
       let userInvite = await MaunalEmailVerification.findOne({
