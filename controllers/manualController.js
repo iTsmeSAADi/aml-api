@@ -90,7 +90,6 @@ export const quickNameSearch = catchAsyncError(async (req, res, next) => {
     console.log(err.message);
   }
 });
-//email Identity Verification by sending 2 URLs one for browser and another for live mobile verification.
 export const emailIdentityVerification = catchAsyncError(
   async (req, res, next) => {
     try {
@@ -137,14 +136,6 @@ export const emailIdentityVerification = catchAsyncError(
       const responseRedirection = await DocuPass.createRedirection();
       const liveMobileResponse = await DocuPass.createLiveMobile();
       if (!responseRedirection.error || !liveMobileResponse.error) {
-        // console.log("Web Redirection");
-        console.log(responseRedirection);
-        // console.log("live mobile");
-        console.log(liveMobileResponse);
-        console.log("Web Url:");
-        console.log(responseRedirection["url"]);
-        console.log("Live Mobile Url:");
-        console.log(liveMobileResponse["url"]);
         const message = `You have been invited to verify identity in the GlobalCompliance platform. If you want to uplaod documemtns for verification click on the given Link ${responseRedirection["url"]} or if you want use live mobile verification use this link ${liveMobileResponse["url"]} to complete the Identity Verification process.`;
         userInvite.referenceToken.webRedirectionToken =
           responseRedirection.reference;
@@ -258,7 +249,10 @@ export const quickDocumentScan = catchAsyncError(async (req, res, next) => {
     const { docFrontImage, docBackImage, companyName } = req.body;
     if (!companyName || !docFrontImage || !docBackImage)
       return next(new errorHandler("Required fields can't be empty", 400));
-    const searchCompany = await Company.findOne({ name: companyName });
+    console.log("docFrontImage > ", docFrontImage)
+    console.log("docBackImage > ", docBackImage)
+    console.log("companyName > ", docFrontImage)
+    const searchCompany = await User.findOne({ companyName: companyName });
     if (!searchCompany)
       return next(new errorHandler("Company doesn't exist!", 404));
     const docScanInstance = await QuickDocumentScan.create({
