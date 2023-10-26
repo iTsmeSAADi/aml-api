@@ -104,7 +104,7 @@ export const emailIdentityVerification = catchAsyncError(
         email,
       });
       if (userInvite) return next(new errorHandler("User already exists", 409));
-      const { user } = req.user;
+      const { user } = req;
       const { companyUser } = req;
       let adminId = "";
       let adminEmail = "";
@@ -292,6 +292,7 @@ export const quickDocumentScan = catchAsyncError(async (req, res, next) => {
       console.log(
         `Hello your name is ${data_result["firstName"]} ${data_result["lastName"]}`
       );
+      // Parse document authentication results
       if (authentication_result) {
         if (authentication_result["score"] > 0.5) {
           console.log("The document uploaded is authentic");
