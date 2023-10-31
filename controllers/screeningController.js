@@ -6,7 +6,6 @@ import { combineArrays } from "../utils/combineTwoArrays.js";
 import { QuickDocumentScan } from "../models/QuickDocumentScan.js";
 
 export const getAllScreenings = catchAsyncError(async (req, res, next) => {
-  //-----------------------------------email identity verification portion-----------------------------
   let result = await VaultApi.list({
     filter: ["docupass_success=1"],
     orderby: "firstName",

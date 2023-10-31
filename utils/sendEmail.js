@@ -1,23 +1,21 @@
-import pkg from 'nodemailer';
-const { nodemailer } = pkg;
-
-export const sendEmail = async (to, from, subject, text) => {
+import nodemailer from 'nodemailer';
 
 
-  var transporter = nodemailer.createTransport({
+const sendEmail = async (to, from, subject, text) => {
+  const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: 'passquantum@gmail.com',
       pass: '3Fhl%3Den-GB&dsh'
     }
   });
-  var mailOptions = {
+  const mailOptions = {
     from: 'passquantum@gmail.com',
     to: to,
     subject: subject,
     text: text,
   };
-  transporter.sendMail(mailOptions, function (error, info) {
+  transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.log(error);
     } else {
@@ -25,3 +23,6 @@ export const sendEmail = async (to, from, subject, text) => {
     }
   });
 };
+
+export { sendEmail };
+
