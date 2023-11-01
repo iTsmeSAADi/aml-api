@@ -8,7 +8,7 @@ import companyRoutes from "./routes/CompanyRoutes.js";
 import manualRoutes from "./routes/ManualRoutes.js";
 import screaningsRoute from "./routes/ScreeningRoutes.js";
 import { initializeApp } from 'firebase/app';
-import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 const firebaseConfig = {
   apiKey: "AIzaSyAccqqSrkBYn5Qy-0QSevp0IzGte2u-JOg",
   authDomain: "horselux-167fb.firebaseapp.com",
@@ -56,24 +56,29 @@ export const DocuPass = connectIDAnalyzerDocuPass();
 export const VaultApi = connectIDAnalyzerVault();
 export const CoreAPI = connectIDAnalyzerCoreAPI();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
 
-const upload = multer({ storage: storage });
+
+const upload = multer({
+  storage: multer.memoryStorage()
+});
 
 // Define a route to handle file uploads
 app.post('/upload', upload.single('file'), async (req, res) => {
   const file = req.file;
-  const storageRef = ref(fbStorage, file.originalname);
-  await storageRef.put(file);
-  const downloadURL = await getDownloadURL(storageRef);
-  res.send({ downloadURL });
+
+  if (!file) {
+    return res.status(400).send('No file uploaded.');
+  }
+
+  const storageRef = ref(fbStorage, 'images/' + file.originalname);
+
+  try {
+    await uploadBytes(storageRef, file.buffer);
+    const downloadURL = await getDownloadURL(storageRef);
+    res.json({ downloadURL });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 app.get("/", (req, res) => {
   res.status(200).send("Backend is working...");
