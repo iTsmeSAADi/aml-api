@@ -11,9 +11,7 @@ import { isAuthenticated } from "../middlewares/isAuthenticated.js";
 import screeningRoutes from "../routes/ScreeningRoutes.js";
 const router = express.Router();
 //email Identity Verification
-router
-  .route("/emailverificationidentity")
-  .post(isAuthenticated, emailIdentityVerification);
+router.post("/emailverificationidentity", isAuthenticated, emailIdentityVerification);
 //manual quick name search
 router.route("/quicknamesearch").post(isAuthenticated, quickNameSearch);
 //docupass search by custom id. i.e id from local database.

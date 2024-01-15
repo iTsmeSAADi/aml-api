@@ -5,19 +5,19 @@ const sendEmail = async (to, from, subject, text) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'passquantum@gmail.com',
-      pass: '3Fhl%3Den-GB&dsh'
+      user: 'saadshah269@gmail.com',
+      pass: 'kihkpxmwdulurvma'
     }
   });
   const mailOptions = {
-    from: 'passquantum@gmail.com',
+    from: 'saadshah269@gmail.com',
     to: to,
     subject: subject,
     text: text,
   };
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.log(error);
+      console.log("Error sending email: " + error);
     } else {
       console.log('Email sent: ' + info.response);
     }

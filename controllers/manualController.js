@@ -55,7 +55,7 @@ export const quickNameSearch = catchAsyncError(async (req, res, next) => {
     if (searchByID.items.length === 0 && searchByName.items.length === 0) {
       return res.status(200).json({
         success: true,
-        message: `${name}does not have any criminal Record and does not exist in database`,
+        message: `${name} does not have any criminal Record and does not exist in database`,
       });
     } else {
       let databaseId = "";
@@ -84,7 +84,7 @@ export const quickNameSearch = catchAsyncError(async (req, res, next) => {
     }
     return res.status(200).json({
       success: true,
-      message: `${name}does not have any criminal Record and does not exist in database`,
+      message: `${name} does not have any criminal Record and does not exist in database`,
     });
   } catch (err) {
     console.log(err.message);
@@ -136,7 +136,7 @@ export const emailIdentityVerification = catchAsyncError(
       const responseRedirection = await DocuPass.createRedirection();
       const liveMobileResponse = await DocuPass.createLiveMobile();
       if (!responseRedirection.error || !liveMobileResponse.error) {
-        const message = `You have been invited to verify identity in the GlobalCompliance platform. If you want to uplaod documemtns for verification click on the given Link ${responseRedirection["url"]} or if you want use live mobile verification use this link ${liveMobileResponse["url"]} to complete the Identity Verification process.`;
+        const message = `You have been invited to verify identity in the GlobalCompliance platform. If you want to uplaod documents for verification click on the given Link ${responseRedirection["url"]} or if you want use live mobile verification use this link ${liveMobileResponse["url"]} to complete the Identity Verification process.`;
         userInvite.referenceToken.webRedirectionToken =
           responseRedirection.reference;
         userInvite.referenceToken.liveMobileToken =
@@ -300,7 +300,7 @@ export const quickDocumentScan = catchAsyncError(async (req, res, next) => {
         message = `${data_result["firstName"]} ${data_result["lastName"]} does not have any criminal record and is not found in any database.`;
       } else {
         if (aml_database === "interpol") {
-          message = `${data_result["firstName"]} ${data_result["lastName"]} has  criminal Record and  exist in database of ${aml_database} with schema ${aml_schema}.`;
+          message = `${data_result["firstName"]} ${data_result["lastName"]} has criminal Record and  exist in database of ${aml_database} with schema ${aml_schema}.`;
         } else {
           message = `${data_result["firstName"]} ${data_result["lastName"]}  exists in database of ${aml_database} with schema ${aml_schema}.`;
         }
