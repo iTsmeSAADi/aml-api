@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import moment from "moment";
 import validator from "validator";
+
 const schema = new mongoose.Schema({
   name: {
     type: String,
