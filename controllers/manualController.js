@@ -1,5 +1,13 @@
+import fs from 'fs'
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
+import FormData from 'form-data';
+import api from 'api';
+
+const sdk = api('@docsumonew/v1.3.1#55m381wldljtw7d');
+
+
 import errorHandler from "../utils/errorHandler.js";
+import mindee from 'mindee'
 import { DocuPass, amlAPI, VaultApi, CoreAPI } from "../app.js";
 import { Company } from "../models/Company.js";
 import { User } from "../models/User.js";
@@ -9,6 +17,8 @@ import { sendEmail } from "../utils/sendEmail.js";
 import mongoose from "mongoose";
 import { CoreAPIFeatures } from "../utils/IDAnalyzer/coreAPIFeatures.js";
 import { QuickDocumentScan } from "../models/QuickDocumentScan.js";
+import {DocumentForensic} from '../models/DocumentForensic.js'
+import axios from "axios";
 export const quickNameSearch = catchAsyncError(async (req, res, next) => {
   try {
     const {
@@ -99,7 +109,7 @@ export const emailIdentityVerification = catchAsyncError(
       const companyName = await User.findOne({ companyName: company });
       if (!companyName)
         return next(new errorHandler("Company doesn't exist!", 404));
-      let userInvite = await MaunalEmailVerification.findOne({
+      let userInvite = await QuickDocumentScan.findOne({
         email,
       });
       if (userInvite) return next(new errorHandler("User already exists", 409));
@@ -308,6 +318,8 @@ export const quickDocumentScan = catchAsyncError(async (req, res, next) => {
       docScanInstance.fullName = response.result.fullName;
       docScanInstance.vaultid = response.vaultid;
       docScanInstance.result = response;
+      docScanInstance.manualScreeningType = "Quick Document Scan";
+      docScanInstance.manualScreeningId = 1;
       await docScanInstance.save();
 
       return res.status(200).json({
@@ -320,5 +332,149 @@ export const quickDocumentScan = catchAsyncError(async (req, res, next) => {
     }
   } catch (err) {
     console.log(err.message);
+    res.status(500).json({ error: "Internal server error", message: err.data.message });
   }
 });
+
+export const forensicScanRequest = catchAsyncError(async (req, res, next) => {
+  try {
+    const admin = req.user ? req.user : req.companyUser;
+    const { companyName, file, tag } = req.body;
+
+    console.log('companyName, file, tag', companyName, file, tag);
+
+    const searchCompany = await User.findOne({ companyName: companyName });
+
+    console.log('searchCompany', searchCompany);
+
+    if (!searchCompany) {
+      return res.status(404).json({ error: "Company doesn't exist!" });
+    }
+
+    // Fetch the allowed document types from the API response
+    const allowedTypesResponse = await sdk.getApiV1EeveeApikeyLimit({
+      apikey: process.env.DOCSUMO_APIKEY
+    });
+
+    console.log('allowedTypesResponse', allowedTypesResponse);
+
+    if (allowedTypesResponse.data.status !== 'success') {
+      throw new Error("Failed to fetch allowed document types!");
+    }
+
+    const allowedTypes = allowedTypesResponse.data.data.document_types.map(type => type.title);
+    
+
+    console.log("allowedTypes", allowedTypes);
+
+    // Check if the provided 'tag' matches one of the allowed titles
+    const matchingType = allowedTypes.find(type => type.toLowerCase() === tag.toLowerCase());
+
+    console.log('matchingType', matchingType);
+    if (!matchingType) {
+      throw new Error("Invalid document type!");
+    }
+
+    // Proceed with the API request
+    let data = JSON.stringify({
+      "file_url": file
+    });
+
+    const uploadResponse = await sdk.postApiV1EeveeApikeyUploadCustom({
+      file: file,
+      type: matchingType // Use the matchingType instead of the original tag
+    }, {
+      apikey: process.env.DOCSUMO_APIKEY
+    });
+
+    // Assuming you have the uploadResponse.data.data.doc_id available
+    const docId = uploadResponse.data.data.document[0].doc_id;
+
+    console.log('docId', docId)
+
+
+    const docScanInstance = await QuickDocumentScan.create({
+      fullName: "test",
+      vaultid: "test",
+      forensicType: matchingType,
+      doc_front_url: file,
+      fk_admin: {
+        admin_id: admin._id,
+        admin_name: admin.name,
+      },
+      review_url: uploadResponse.data.data.document[0].review_url,
+      company: {
+        company_id: searchCompany._id,
+        name: searchCompany.name,
+      },
+    });
+
+    docScanInstance.fullName = tag;
+    docScanInstance.vaultid = uploadResponse.data.data.document[0].user_id;
+    // docScanInstance.result = response;
+    docScanInstance.manualScreeningType = "Document Forensics Analysis";
+    docScanInstance.manualScreeningId = 2;
+    docScanInstance.doc_id = docId;
+    await docScanInstance.save();
+    let message = `Your ${tag} has been queued for forensics review with document id ${docId}`;
+
+    return res.status(200).json({
+      success: true,
+      docScanInstance,
+      message,
+    });
+
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ error: "Internal server error", message: error.message });
+  }
+});
+
+export const getSpecificScreeningReport = catchAsyncError(async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    // Use findById to get the screening report
+    const screeningReport = await QuickDocumentScan.findById(id);
+
+    // If the screening report is not found, handle it appropriately
+    if (!screeningReport) {
+      return res.status(404).json({ error: 'Screening report not found' });
+    }
+
+    console.log('screeningReport', screeningReport.manualScreeningId);
+
+    // Check the value of manualScreeningId and apply different logic
+    if (screeningReport.manualScreeningId === 1) {
+      // Apply logic for manualScreeningId === 1
+      // For example:
+      res.status(200).json({ success: true, message: screeningReport.manualScreeningType, screeningReport: screeningReport });
+
+    } else if (screeningReport.manualScreeningId === 2) {
+      console.log('screeningReport.doc_id', screeningReport.doc_id)
+
+      const docTypeDetails = await sdk.getApiV1EeveeApikeyDocumentsDetailDoc_id({
+      }, {
+        doc_id: screeningReport.doc_id,
+        apikey: process.env.DOCSUMO_APIKEY
+      });
+
+      const docsumeSingleResult = await sdk.getApiV1EeveeApikeyDataSimplifiedDoc_id({
+      }, {
+        doc_id: screeningReport.doc_id,
+        apikey: process.env.DOCSUMO_APIKEY
+      });
+
+      res.status(200).json({ success: true, message: screeningReport.manualScreeningType, doc_front_url: screeningReport.doc_front_url, screeningReport: docsumeSingleResult.data, type: docTypeDetails.data.data.document.type_title});
+
+    } else {
+      // Handle other cases if needed
+      res.status(200).json({ success: false, message: "Screening Type Not Found", screeningReport: screeningReport }); 
+    }
+
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+

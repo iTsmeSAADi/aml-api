@@ -18,6 +18,24 @@ export const getAllCompanies = catchAsyncError(async (req, res, next) => {
     "data": companies,
   });
 });
+
+export const getSpecificCompany = catchAsyncError(async (req, res, next) => {
+try {
+  const {id} = req.params
+  console.log('paramsid', id)
+  const company = await User.findById(id
+  );
+
+  console.log('company', company)
+  res.status(200).json({
+    success: true,
+    message: "company",
+    "data": company,
+  });
+} catch (error) {
+  console.log(error)
+}
+});
 export const getAllUsers = catchAsyncError(async (req, res, next) => {
   let user = req.user;
   console.log(user);

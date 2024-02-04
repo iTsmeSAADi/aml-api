@@ -8,6 +8,7 @@ import {
   invitedUserLogOut,
   invitedUserLogin,
   getAllUsers,
+  getSpecificCompany,
 } from "../controllers/companyController.js";
 import { isAuthenticated } from "../middlewares/isAuthenticated.js";
 import { isSuperAdmin } from "../middlewares/isSuperAdmin.js";
@@ -15,6 +16,8 @@ const router = express.Router();
 //get all companies by superAdmin 
 //isAuthenticated, isSuperAdmin
 router.route("/").get(isAuthenticated, getAllCompanies);
+router.route("/:id").get(getSpecificCompany);
+
 router.route("/users").get(isAuthenticated, getAllUsers);
 //add new company only by superAdmin
 router.route("/addcompany").post(isAuthenticated, isSuperAdmin, addCompany);
