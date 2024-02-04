@@ -363,7 +363,10 @@ export const forensicScanRequest = catchAsyncError(async (req, res, next) => {
     }
 
     const allowedTypes = allowedTypesResponse.data.data.document_types.map(type => type.title);
+<<<<<<< HEAD
     
+=======
+>>>>>>> 46f5dc6d572748a4e2b4e38bc43e3b30978a6cd8
 
     console.log("allowedTypes", allowedTypes);
 
