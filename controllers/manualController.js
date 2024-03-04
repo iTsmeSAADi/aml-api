@@ -473,7 +473,7 @@ export const getSpecificScreeningReport = catchAsyncError(async (req, res, next)
 
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error', message: error.data });
   }
 });
 

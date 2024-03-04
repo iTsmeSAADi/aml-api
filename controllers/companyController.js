@@ -20,25 +20,33 @@ export const getAllCompanies = catchAsyncError(async (req, res, next) => {
 });
 
 export const getSpecificCompany = catchAsyncError(async (req, res, next) => {
-try {
-  const {id} = req.params
-  console.log('paramsid', id)
-  const company = await User.findById(id
-  );
+  try {
+    const { id } = req.params;
+    console.log('paramsid', id);
+    const company = await User.findById(id);
 
-  console.log('company', company)
-  res.status(200).json({
-    success: true,
-    message: "company",
-    "data": company,
-  });
-} catch (error) {
-  console.log(error)
-}
+    if (!company) {
+      return res.status(404).json({
+        success: false,
+        message: 'Company not found',
+      });
+    }
+
+    console.log('company', company);
+    res.status(200).json({
+      success: true,
+      message: 'Company',
+      data: company,
+    });
+  } catch (error) {
+    console.error(error);
+    next(error); // Pass the error to the next middleware
+  }
 });
+
 export const getAllUsers = catchAsyncError(async (req, res, next) => {
   let user = req.user;
-  console.log(user);
+  console.log('user', user);
   let query = {};
   if (user.role === "user") {
     res.status(200).json({
